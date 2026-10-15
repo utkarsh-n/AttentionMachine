@@ -1,0 +1,107 @@
+name: AttentionMachine
+options:
+  bundleIdPrefix: com.utkarsh
+  deploymentTarget:
+    iOS: '27.0'
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: '6.0'
+    MARKETING_VERSION: '0.1.0'
+    CURRENT_PROJECT_VERSION: '4'
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+packages:
+  AttentionCore:
+    path: AttentionCore
+  OfflineIntelligenceKit:
+    path: ../OfflineIntelligenceKit
+  OfflineIntelligenceMLX:
+    path: ../OfflineIntelligenceKit/MLX
+  MLXSwiftLM:
+    url: https://github.com/ml-explore/mlx-swift-lm
+    exactVersion: 3.32.3
+  MLXSwift:
+    url: https://github.com/ml-explore/mlx-swift
+    exactVersion: 0.32.3
+  Transformers:
+    url: https://github.com/huggingface/swift-transformers
+    exactVersion: 1.3.0
+  Collections:
+    url: https://github.com/apple/swift-collections
+    exactVersion: 1.5.0
+targets:
+  AttentionMachine:
+    type: application
+    platform: iOS
+    sources:
+      - App
+      - path: Resources
+        buildPhase: resources
+        excludes:
+          - Model
+          - Models
+      - path: Resources/Model
+        type: folder
+        buildPhase: resources
+      - path: Resources/Models
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: AttentionCore
+      - package: OfflineIntelligenceKit
+        product: OfflineIntelligence
+      - package: OfflineIntelligenceMLX
+        product: OfflineIntelligenceMLX
+      - package: MLXSwiftLM
+        product: MLXLLM
+      - package: MLXSwiftLM
+        product: MLXLMCommon
+      - package: MLXSwift
+        product: MLX
+      - package: MLXSwift
+        product: MLXNN
+      - package: Transformers
+        product: Tokenizers
+    entitlements:
+      path: App/AttentionMachine.entitlements
+      properties:
+        com.apple.developer.kernel.increased-memory-limit: true
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Attention Is All You Need
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        ITSAppUsesNonExemptEncryption: false
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.utkarsh.attentionmachine
+        TARGETED_DEVICE_FAMILY: '1'
+        SUPPORTS_MACCATALYST: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  AttentionMachineUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: AttentionMachine
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.utkarsh.attentionmachine.uitests
+schemes:
+  AttentionMachine:
+    build:
+      targets:
+        AttentionMachine: all
+    test:
+      targets: [AttentionMachineUITests]
